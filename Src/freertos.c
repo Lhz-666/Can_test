@@ -122,8 +122,6 @@ void StartDefaultTask(void const * argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
   /* Infinite loop */
-//	HAL_CAN_Start(&hcan1);
-//  can_filter_init();
 	for(;;)//这段CMD代码一定要放在循环中否则动不了。还有就是由于这里没有电调，所以直接用的是电机的标识符
   {
     CAN_TxHeaderTypeDef pHeader1;
@@ -151,23 +149,5 @@ void StartDefaultTask(void const * argument)
 
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
-
-//void can_filter_init(void)
-//{
-//    CAN_FilterTypeDef can_filter_st;
-//    can_filter_st.FilterActivation = ENABLE;
-//    can_filter_st.FilterMode = CAN_FILTERMODE_IDMASK;
-//    can_filter_st.FilterScale = CAN_FILTERSCALE_32BIT;
-//    can_filter_st.FilterIdHigh = 0x0000;
-//    can_filter_st.FilterIdLow = 0x0000;
-//    can_filter_st.FilterMaskIdHigh = 0x0000;
-//    can_filter_st.FilterMaskIdLow = 0x0000;
-//    can_filter_st.FilterBank = 0;
-//    can_filter_st.FilterFIFOAssignment = CAN_RX_FIFO0;
-//    HAL_CAN_ConfigFilter(&hcan1, &can_filter_st);
-//    HAL_CAN_Start(&hcan1);
-//    HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING);
-// 
-//}
 
 /* USER CODE END Application */
