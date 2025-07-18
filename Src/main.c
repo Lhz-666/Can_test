@@ -91,7 +91,7 @@ int main(void)
   MX_GPIO_Init();
   MX_CAN1_Init();
   /* USER CODE BEGIN 2 */
-	HAL_CAN_Start(&hcan1);
+	//HAL_CAN_Start(&hcan1);
 	can_filter_init();
   /* USER CODE END 2 */
 
@@ -170,7 +170,8 @@ void can_filter_init(void)
     can_filter_st.FilterIdLow = 0x0000;
     can_filter_st.FilterMaskIdHigh = 0x0000;
     can_filter_st.FilterMaskIdLow = 0x0000;
-    can_filter_st.FilterBank = 0;
+	
+    can_filter_st.FilterBank = 0;//Can1������
     can_filter_st.FilterFIFOAssignment = CAN_RX_FIFO0;
     HAL_CAN_ConfigFilter(&hcan1, &can_filter_st);
     HAL_CAN_Start(&hcan1);

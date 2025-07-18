@@ -45,7 +45,8 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
-
+uint16_t GetSpeed,SetSpeed;
+int16_t speed=5000;
 /* USER CODE END Variables */
 osThreadId defaultTaskHandle;
 
@@ -131,7 +132,6 @@ void StartDefaultTask(void const * argument)
 		pHeader1.DLC = 0x08;          //DLC��8�ֽ�
 		
 		uint8_t aData[8]={0};
-		int16_t speed=10000;
 		aData[0] = speed >> 8;          //���ID��1�����Ƶ���ֵ��8λ
 		aData[1] = speed;               //���ID��1�����Ƶ�����8λ
 		aData[2] = 0;          //���ID��1�����Ƶ���ֵ��8λ
@@ -149,5 +149,23 @@ void StartDefaultTask(void const * argument)
 
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
-
+void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)//回调函数
+{
+    CAN_RxHeaderTypeDef rx_header;
+    uint8_t rx_data[8];
+ 
+    HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &rx_header, rx_data);//将数据存放于rx_data数组中
+ 
+    switch (rx_header.StdId)//这个以及下面自己发挥
+    {
+ 
+        case 0x205://根据电机具体id号设置 0x204+id(6020手册上找)
+        {
+ 
+						GetSpeed = (uint16_t)((rx_data)[2] << 8 | (rx_data)[3]); // 根据手册 2、3 位分别为电机转速的高八位、低八位
+            break;																										// 此处是将两个数据合并为一个数据
+        }
+ 
+    }
+	}
 /* USER CODE END Application */
