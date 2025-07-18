@@ -4,6 +4,7 @@
 "can_test\gpio.o"
 "can_test\freertos.o"
 "can_test\can.o"
+"can_test\usart.o"
 "can_test\stm32f4xx_it.o"
 "can_test\stm32f4xx_hal_msp.o"
 "can_test\stm32f4xx_hal_timebase_tim.o"
@@ -23,6 +24,7 @@
 "can_test\stm32f4xx_hal_cortex.o"
 "can_test\stm32f4xx_hal.o"
 "can_test\stm32f4xx_hal_exti.o"
+"can_test\stm32f4xx_hal_uart.o"
 "can_test\system_stm32f4xx.o"
 "can_test\croutine.o"
 "can_test\event_groups.o"
@@ -34,7 +36,7 @@
 "can_test\cmsis_os.o"
 "can_test\heap_4.o"
 "can_test\port.o"
---strict --scatter "CAN_Test\CAN_Test.sct"
+--library_type=microlib --strict --scatter "CAN_Test\CAN_Test.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers
 --list "CAN_Test.map" -o CAN_Test\CAN_Test.axf
