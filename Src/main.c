@@ -20,6 +20,7 @@
 #include "main.h"
 #include "cmsis_os.h"
 #include "can.h"
+#include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -90,14 +91,15 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_CAN1_Init();
+  MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-	HAL_CAN_Start(&hcan1);
+	//HAL_CAN_Start(&hcan1);
 	can_filter_init();
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in cmsis_os2.c) */
   MX_FREERTOS_Init();
-
+	printf("init_success\n");
   /* Start scheduler */
   osKernelStart();
 
@@ -170,12 +172,22 @@ void can_filter_init(void)
     can_filter_st.FilterIdLow = 0x0000;
     can_filter_st.FilterMaskIdHigh = 0x0000;
     can_filter_st.FilterMaskIdLow = 0x0000;
-    can_filter_st.FilterBank = 0;
+	
+    can_filter_st.FilterBank = 0;//Can1������
     can_filter_st.FilterFIFOAssignment = CAN_RX_FIFO0;
     HAL_CAN_ConfigFilter(&hcan1, &can_filter_st);
     HAL_CAN_Start(&hcan1);
     HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING);
- 
+//	if(HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING)!=HAL_OK)
+//	{
+//		printf("CAN_IT_Failed\n");
+//	}
+//	else
+//	{
+//		printf("CAN_IT_Success\n");
+//	}
+		
+		printf("can_filter_init_success\n");
 }
 /* USER CODE END 4 */
 
