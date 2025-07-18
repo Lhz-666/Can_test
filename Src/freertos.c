@@ -139,7 +139,7 @@ void StartDefaultTask(void const * argument)
 		pHeader1.DLC = 0x08;          //DLC��8�ֽ�
 		
 		uint8_t aData[8]={0};
-//		uint8_t Data=20;
+		int16_t speed=10000;
 		aData[0] = speed >> 8;          //���ID��1�����Ƶ���ֵ��8λ
 		aData[1] = speed;               //���ID��1�����Ƶ�����8λ
 		aData[2] = 0;          //���ID��1�����Ƶ���ֵ��8λ
@@ -150,6 +150,7 @@ void StartDefaultTask(void const * argument)
 		aData[7] = 0; 
 		
 		HAL_CAN_AddTxMessage(&hcan1, &pHeader1, aData, 0);
+
   }
   /* USER CODE END StartDefaultTask */
 }
