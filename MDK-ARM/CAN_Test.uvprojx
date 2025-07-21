@@ -480,6 +480,11 @@
               <FileType>1</FileType>
               <FilePath>../Src/stm32f4xx_hal_timebase_tim.c</FilePath>
             </File>
+            <File>
+              <FileName>PID.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\PID.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
