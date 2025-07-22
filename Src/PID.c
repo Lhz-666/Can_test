@@ -89,10 +89,7 @@ float PID_Position_Calculate(PID_type_def *pid,float now_value,float set_value)
 
     pid->out=pid->Pout+pid->Iout+pid->Dout;
     pid->out=LimitMax(pid->out,M6020_MOTOR_POSITION_PID_MAX_OUT);
-
-
-		
-		
+	
 		return pid->out;
 }
 

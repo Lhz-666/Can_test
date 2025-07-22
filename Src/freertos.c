@@ -143,8 +143,6 @@ void StartDefaultTask(void const * argument)//这个是motor任务的代码
 //		motor_6020.Set_speed=SetSpeed;
 //		motor_6020.give_Voltage=(int16_t)PID_Speed_Calculate(&motor_6020.speed_PID,motor_6020.speed,motor_6020.Set_speed);
 		
-//		if(motor_6020.Set_position-motor_6020.position<=360&&motor_6020.Set_position-motor_6020.position>=-360)//单圈控制时
-//		{
 			motor_6020.position=GetAngle;//位置环
 		motor_6020.Set_position=SetPosition;
 		motor_6020.give_Voltage=(int16_t)PID_Position_Calculate(&motor_6020.position_PID,motor_6020.position,motor_6020.Set_position);
@@ -166,37 +164,6 @@ void StartDefaultTask(void const * argument)//这个是motor任务的代码
 		aData[7] = 0; 
 		
 		HAL_CAN_AddTxMessage(&hcan1, &pHeader1, aData, 0);
-//		}
-//		else
-//		{
-//			int8_t number;
-//			number=(int8_t)(motor_6020.Set_position-motor_6020.Set_position)/180;
-//			float shengyu_angle=motor_6020.Set_position-motor_6020.Set_position*number;
-//			CAN_TxHeaderTypeDef pHeader1;
-//			motor_6020.Set_position=SetPosition;
-//			for(int i=0;i<number;i++)
-//			{
-//				motor_6020.position=GetAngle+i*180;
-//				PID_Position_Calculate(&motor_6020.position_PID,motor_6020.position,motor_6020.Set_position);
-//				
-//				pHeader1.StdId = 0x1FF;       
-//				pHeader1.IDE = CAN_ID_STD;    
-//				pHeader1.RTR = CAN_RTR_DATA;  
-//				pHeader1.DLC = 0x08;          
-
-//				uint8_t aData[8]={0};
-//				aData[0] = motor_6020.give_Voltage >> 8;          
-//				aData[1] = motor_6020.give_Voltage;    		
-//				aData[2] = 0;          
-//				aData[3] = 0; 
-//				aData[4] = 0;          
-//				aData[5] = 0; 
-//				aData[6] = 0;          
-//				aData[7] = 0; 
-//		
-//				HAL_CAN_AddTxMessage(&hcan1, &pHeader1, aData, 0);
-//			}
-//		}
   }
   /* USER CODE END StartDefaultTask */
 }
@@ -214,8 +181,6 @@ void StartTask02(void const * argument)//优先级比电机驱动高，后面可
   /* Infinite loop */
   for(;;)
   {
-//		printf("Rpm:%d,Speed:%d,Current:%d,Temperature:%d\n", GetRpm,GetSpeed,GetCurrent,GetTemperature);  // 两个 %d，两个参数
-//		printf("%d,%d,%d,%d\n", GetAngle,GetSpeed,GetCurrent,GetTemperature);  // 四个 %d，四个参数
 		printf("%d,%d,%d,%d\n", GetAngle,GetSpeed,GetCurrent,GetTemperature);  // 四个 %d，两个参数
 		osDelay(3);
   }
