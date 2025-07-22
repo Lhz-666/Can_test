@@ -139,13 +139,13 @@ void StartDefaultTask(void const * argument)//这个是motor任务的代码
 	MOTOR_Init(&motor_6020);
   while(1)
   {
-//    motor_6020.speed=GetSpeed;//速度环
-//		motor_6020.Set_speed=SetSpeed;
-//		motor_6020.give_Voltage=(int16_t)PID_Speed_Calculate(&motor_6020.speed_PID,motor_6020.speed,motor_6020.Set_speed);
+    motor_6020.speed=GetSpeed;//速度环
+		motor_6020.Set_speed=SetSpeed;
+		motor_6020.give_Voltage=(int16_t)PID_Speed_Calculate(&motor_6020.speed_PID,motor_6020.speed,motor_6020.Set_speed);
 		
-			motor_6020.position=GetAngle;//位置环
-		motor_6020.Set_position=SetPosition;
-		motor_6020.give_Voltage=(int16_t)PID_Position_Calculate(&motor_6020.position_PID,motor_6020.position,motor_6020.Set_position);
+//			motor_6020.position=GetAngle;//位置环
+//		motor_6020.Set_position=SetPosition;
+//		motor_6020.give_Voltage=(int16_t)PID_Position_Calculate(&motor_6020.position_PID,motor_6020.position,motor_6020.Set_position);
 
     CAN_TxHeaderTypeDef pHeader1;//控制电机电压
 		pHeader1.StdId = 0x1FF;       

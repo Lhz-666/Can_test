@@ -156,52 +156,32 @@
         <Ww>
           <count>1</count>
           <WinNumber>1</WinNumber>
-          <ItemText>GetCurrent,0x0A</ItemText>
+          <ItemText>SetSpeed,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>2</count>
           <WinNumber>1</WinNumber>
-          <ItemText>GetTemperature,0x0A</ItemText>
+          <ItemText>GetAngle,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>3</count>
           <WinNumber>1</WinNumber>
-          <ItemText>SetSpeed,0x0A</ItemText>
+          <ItemText>motor_6020,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>4</count>
           <WinNumber>1</WinNumber>
-          <ItemText>GetAngle,0x0A</ItemText>
+          <ItemText>SetSpeed,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>5</count>
           <WinNumber>1</WinNumber>
-          <ItemText>motor_6020,0x0A</ItemText>
+          <ItemText>motor_6020.speed</ItemText>
         </Ww>
         <Ww>
           <count>6</count>
           <WinNumber>1</WinNumber>
-          <ItemText>SetSpeed,0x0A</ItemText>
-        </Ww>
-        <Ww>
-          <count>7</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>SetPosition,0x0A</ItemText>
-        </Ww>
-        <Ww>
-          <count>8</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>number,0x0A</ItemText>
-        </Ww>
-        <Ww>
-          <count>9</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>Get_Real_Angle,0x0A</ItemText>
-        </Ww>
-        <Ww>
-          <count>10</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>Last_Get_Real_Angle,0x0A</ItemText>
+          <ItemText>motor_6020.Set_speed</ItemText>
         </Ww>
       </WatchWindow1>
       <WatchWindow2>
@@ -222,11 +202,6 @@
         </Ww>
         <Ww>
           <count>3</count>
-          <WinNumber>2</WinNumber>
-          <ItemText>motor_6020_speed_pid_argument</ItemText>
-        </Ww>
-        <Ww>
-          <count>4</count>
           <WinNumber>2</WinNumber>
           <ItemText>motor_6020.position_PID</ItemText>
         </Ww>
