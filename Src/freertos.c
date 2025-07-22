@@ -48,9 +48,11 @@
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
 int16_t GetSpeed=0,GetAngle=0,GetCurrent=0,GetTemperature=0;
+int16_t Last_Get_Real_Angle=0,Get_Real_Angle=0;//CAN通信返回的值
 int16_t SetVoltage=12500;//这里是电压值。电压给定值范围：-25000~0~25000, 对应最大转矩电流范围 -3A~0~3A
 int16_t SetSpeed=200;//这里是转速
 int16_t SetPosition=200;
+int8_t number;//这里是圈数
 MOTOR_t motor_6020;
 /* USER CODE END Variables */
 osThreadId defaultTaskHandle;
@@ -140,8 +142,10 @@ void StartDefaultTask(void const * argument)//这个是motor任务的代码
 //    motor_6020.speed=GetSpeed;//速度环
 //		motor_6020.Set_speed=SetSpeed;
 //		motor_6020.give_Voltage=(int16_t)PID_Speed_Calculate(&motor_6020.speed_PID,motor_6020.speed,motor_6020.Set_speed);
-				
-		motor_6020.position=GetAngle;//位置环
+		
+//		if(motor_6020.Set_position-motor_6020.position<=360&&motor_6020.Set_position-motor_6020.position>=-360)//单圈控制时
+//		{
+			motor_6020.position=GetAngle;//位置环
 		motor_6020.Set_position=SetPosition;
 		motor_6020.give_Voltage=(int16_t)PID_Position_Calculate(&motor_6020.position_PID,motor_6020.position,motor_6020.Set_position);
 
@@ -153,9 +157,7 @@ void StartDefaultTask(void const * argument)//这个是motor任务的代码
 
 		uint8_t aData[8]={0};
 	  aData[0] = motor_6020.give_Voltage >> 8;          
-	  aData[1] = motor_6020.give_Voltage;
-//		aData[0] = SetVoltage >> 8;          
-//		aData[1] = SetVoltage;    		
+	  aData[1] = motor_6020.give_Voltage;    		
 		aData[2] = 0;          
 		aData[3] = 0; 
 		aData[4] = 0;          
@@ -164,8 +166,37 @@ void StartDefaultTask(void const * argument)//这个是motor任务的代码
 		aData[7] = 0; 
 		
 		HAL_CAN_AddTxMessage(&hcan1, &pHeader1, aData, 0);
+//		}
+//		else
+//		{
+//			int8_t number;
+//			number=(int8_t)(motor_6020.Set_position-motor_6020.Set_position)/180;
+//			float shengyu_angle=motor_6020.Set_position-motor_6020.Set_position*number;
+//			CAN_TxHeaderTypeDef pHeader1;
+//			motor_6020.Set_position=SetPosition;
+//			for(int i=0;i<number;i++)
+//			{
+//				motor_6020.position=GetAngle+i*180;
+//				PID_Position_Calculate(&motor_6020.position_PID,motor_6020.position,motor_6020.Set_position);
+//				
+//				pHeader1.StdId = 0x1FF;       
+//				pHeader1.IDE = CAN_ID_STD;    
+//				pHeader1.RTR = CAN_RTR_DATA;  
+//				pHeader1.DLC = 0x08;          
 
-
+//				uint8_t aData[8]={0};
+//				aData[0] = motor_6020.give_Voltage >> 8;          
+//				aData[1] = motor_6020.give_Voltage;    		
+//				aData[2] = 0;          
+//				aData[3] = 0; 
+//				aData[4] = 0;          
+//				aData[5] = 0; 
+//				aData[6] = 0;          
+//				aData[7] = 0; 
+//		
+//				HAL_CAN_AddTxMessage(&hcan1, &pHeader1, aData, 0);
+//			}
+//		}
   }
   /* USER CODE END StartDefaultTask */
 }
@@ -185,7 +216,7 @@ void StartTask02(void const * argument)//优先级比电机驱动高，后面可
   {
 //		printf("Rpm:%d,Speed:%d,Current:%d,Temperature:%d\n", GetRpm,GetSpeed,GetCurrent,GetTemperature);  // 两个 %d，两个参数
 //		printf("%d,%d,%d,%d\n", GetAngle,GetSpeed,GetCurrent,GetTemperature);  // 四个 %d，四个参数
-		printf("%d,%d,%d,%d\n", GetAngle,GetSpeed,GetCurrent,GetTemperature);  // 两个 %d，两个参数
+		printf("%d,%d,%d,%d\n", GetAngle,GetSpeed,GetCurrent,GetTemperature);  // 四个 %d，两个参数
 		osDelay(3);
   }
   /* USER CODE END StartTask02 */
@@ -199,19 +230,30 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)//回调函数
     uint8_t rx_data[8]={0};
     HAL_CAN_GetRxMessage(&hcan1, CAN_FILTER_FIFO0, &rx_header, rx_data);//将数据存放于rx_data数组中
  
-    switch (rx_header.StdId)//这个以及下面自己发挥
+		switch (rx_header.StdId)//这个以及下面自己发挥
     {
  
-        case 0x205://根据电机具体id号设置 0x204+id(6020手册上找)
+        
+				case 0x205://根据电机具体id号设置 0x204+id(6020手册上找)
         {
-            GetAngle=((uint16_t)((rx_data)[0] << 8 | (rx_data)[1]))*360/8192;
+            Last_Get_Real_Angle=Get_Real_Angle;
+						Get_Real_Angle=((uint16_t)((rx_data)[0] << 8 | (rx_data)[1]))*360/8192;
             GetSpeed = (uint16_t)((rx_data)[2] << 8 | (rx_data)[3]); // 根据手册 2、3 位分别为电机转速的高八位、低八位
             GetCurrent=(uint16_t)((rx_data)[4] << 8 | (rx_data)[5]);
             GetTemperature=(uint16_t) (rx_data)[6] ;
+						if(Last_Get_Real_Angle-Get_Real_Angle>200)
+						{
+								number++;
+						}
+						if(Last_Get_Real_Angle-Get_Real_Angle<-200)
+						{
+							number--;
+						}
+						GetAngle=Get_Real_Angle+number*360;
             break;																										// 此处是将两个数据合并为一个数据
         }
- 
+				
     }
-//	GetSpeed = (uint16_t)((rx_data)[2] << 8 | (rx_data)[3]); // 根据手册 2、3 位分别为电机转速的高八位、低八位
+
 	}
 /* USER CODE END Application */
