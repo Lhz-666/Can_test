@@ -2239,7 +2239,6 @@ __weak void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 {
   /* Prevent unused argument(s) compilation warning */
   UNUSED(hcan);
-	return;
 
   /* NOTE : This function Should not be modified, when the callback is needed,
             the HAL_CAN_RxFifo0MsgPendingCallback could be implemented in the

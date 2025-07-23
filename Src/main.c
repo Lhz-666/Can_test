@@ -25,7 +25,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "FS_remote_control_unit.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -46,7 +46,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+extern uint8_t rx_buffer[32];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -92,14 +92,17 @@ int main(void)
   MX_GPIO_Init();
   MX_CAN1_Init();
   MX_USART1_UART_Init();
+  MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
 	//HAL_CAN_Start(&hcan1);
 	can_filter_init();
+	    // 开始接收 IBUS 数据
+    HAL_UART_Receive_IT(&huart3, rx_buffer, 32);
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in cmsis_os2.c) */
   MX_FREERTOS_Init();
-	printf("init_success\n");
+
   /* Start scheduler */
   osKernelStart();
 
