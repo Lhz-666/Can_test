@@ -489,6 +489,9 @@
               <FileName>FS_remote_control_unit.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Src\FS_remote_control_unit.c</FilePath>
+              <FileName>PID.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\PID.c</FilePath>
             </File>
           </Files>
         </Group>

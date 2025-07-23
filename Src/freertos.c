@@ -142,7 +142,7 @@ void MX_FREERTOS_Init(void) {
   * @retval None
   */
 /* USER CODE END Header_StartDefaultTask */
-void StartDefaultTask(void const * argument)
+void StartDefaultTask(void const * argument)//这个是motor任务的代码
 {
   /* USER CODE BEGIN StartDefaultTask */
   /* Infinite loop */
@@ -191,8 +191,6 @@ void StartDefaultTask(void const * argument)
 		aData[7] = 0; 
 		
 		HAL_CAN_AddTxMessage(&hcan1, &pHeader1, aData, 0);
-
-
   }
   /* USER CODE END StartDefaultTask */
 }
@@ -204,7 +202,7 @@ void StartDefaultTask(void const * argument)
 * @retval None
 */
 /* USER CODE END Header_StartTask02 */
-void StartTask02(void const * argument)
+void StartTask02(void const * argument)//优先级比电机驱动高，后面可能得改一下
 {
   /* USER CODE BEGIN StartTask02 */
   /* Infinite loop */
