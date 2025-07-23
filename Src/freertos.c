@@ -208,9 +208,6 @@ void StartTask02(void const * argument)//优先级比电机驱动高，后面可
   /* Infinite loop */
   for(;;)
   {
-//		printf("Rpm:%d,Speed:%d,Current:%d,Temperature:%d\n", GetRpm,GetSpeed,GetCurrent,GetTemperature);  // 两个 %d，两个参数
-//		printf("%d,%d,%d,%d\n", GetAngle,GetSpeed,GetCurrent,GetTemperature);  // 四个 %d，四个参数
-//		printf("%d,%d,%d,%d\n", GetAngle,GetSpeed,GetCurrent,GetTemperature);
 		HAL_UART_Receive_IT(&huart3,rx_buffer,32);
 		osDelay(3);
 //		last_second_channels++;
