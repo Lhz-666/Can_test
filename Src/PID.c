@@ -155,9 +155,9 @@ void PID_Init(PID_type_def *pid,const float PID[3],float max_out,float max_iout)
 */
 void MOTOR_Init(MOTOR_t *motor6020)
 {
- 		const float motor_6020_position_pid_argument[3]={M6020_MOTOR_POSITION_PID_KP,M6020_MOTOR_POSITION_PID_KI,M6020_MOTOR_POSITION_PID_KD};//位置环
-    PID_Init(&motor6020->position_PID,motor_6020_position_pid_argument,M6020_MOTOR_POSITION_PID_MAX_OUT,M6020_MOTOR_POSITION_PID_MAX_IOUT);
+// 		const float motor_6020_position_pid_argument[3]={M6020_MOTOR_POSITION_PID_KP,M6020_MOTOR_POSITION_PID_KI,M6020_MOTOR_POSITION_PID_KD};//位置环
+//    PID_Init(&motor6020->position_PID,motor_6020_position_pid_argument,M6020_MOTOR_POSITION_PID_MAX_OUT,M6020_MOTOR_POSITION_PID_MAX_IOUT);
 	
-//		const float motor_6020_speed_pid_argument[3]={M6020_MOTOR_SPEED_PID_KP,M6020_MOTOR_SPEED_PID_KI,M6020_MOTOR_SPEED_PID_KD};//速度环
-//    PID_Init(&motor6020->speed_PID,motor_6020_speed_pid_argument,M6020_MOTOR_POSITION_PID_MAX_OUT,M6020_MOTOR_POSITION_PID_MAX_IOUT);
+		const float motor_6020_speed_pid_argument[3]={M6020_MOTOR_SPEED_PID_KP,M6020_MOTOR_SPEED_PID_KI,M6020_MOTOR_SPEED_PID_KD};//速度环
+    PID_Init(&motor6020->speed_PID,motor_6020_speed_pid_argument,M6020_MOTOR_POSITION_PID_MAX_OUT,M6020_MOTOR_POSITION_PID_MAX_IOUT);
 }

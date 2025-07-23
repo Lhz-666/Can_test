@@ -149,19 +149,19 @@ void StartDefaultTask(void const * argument)//这个是motor任务的代码
 	MOTOR_Init(&motor_6020);
   while(1)
   {
-//    motor_6020.speed=GetSpeed;//速度环
-//		motor_6020.Set_speed=SetSpeed;
-//		motor_6020.give_Voltage=(int16_t)PID_Speed_Calculate(&motor_6020.speed_PID,motor_6020.speed,motor_6020.Set_speed);
+    motor_6020.speed=GetSpeed;//速度环
+		motor_6020.Set_speed=(channels[1]-1500)*300/500;
+		motor_6020.give_Voltage=(int16_t)PID_Speed_Calculate(&motor_6020.speed_PID,motor_6020.speed,motor_6020.Set_speed);
 				
-		motor_6020.position=GetAngle;//位置环(能控但是有点慢且不准)
 		
-//		//进行简单的滤波
-//		if(last_second_channels-channels[2]>1&&last_second_channels-channels[2]<-1)
-//		{
-//			motor_6020.Set_position=(channels[2]-1000)*720/1000;
-//		}
-		motor_6020.Set_position=(channels[2]-1000)*720/1000;
-		motor_6020.give_Voltage=(int16_t)PID_Position_Calculate(&motor_6020.position_PID,motor_6020.position,motor_6020.Set_position);
+//		motor_6020.position=GetAngle;//位置环(能控但是有点慢且不准)
+////		//进行简单的滤波
+////		if(last_second_channels-channels[2]>1&&last_second_channels-channels[2]<-1)
+////		{
+////			motor_6020.Set_position=(channels[2]-1000)*720/1000;
+////		}
+//		motor_6020.Set_position=(channels[2]-1000)*720/1000;
+//		motor_6020.give_Voltage=(int16_t)PID_Position_Calculate(&motor_6020.position_PID,motor_6020.position,motor_6020.Set_position);
 		
 //		if(Remote_Protected_Flag)//遥控保护
 //		{
