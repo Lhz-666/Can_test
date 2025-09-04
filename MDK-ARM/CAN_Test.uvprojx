@@ -391,16 +391,6 @@
           <GroupName>Application/User</GroupName>
           <Files>
             <File>
-              <FileName>PID.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Src\PID.c</FilePath>
-            </File>
-            <File>
-              <FileName>FS_remote_control_unit.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Src\FS_remote_control_unit.c</FilePath>
-            </File>
-            <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Src/main.c</FilePath>
@@ -489,6 +479,11 @@
               <FileName>stm32f4xx_hal_timebase_tim.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Src/stm32f4xx_hal_timebase_tim.c</FilePath>
+            </File>
+            <File>
+              <FileName>FS_remote_control_unit.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\FS_remote_control_unit.c</FilePath>
             </File>
           </Files>
         </Group>

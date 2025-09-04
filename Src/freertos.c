@@ -27,6 +27,7 @@
 /* USER CODE BEGIN Includes */
 #include "usart.h"
 #include "PID.h"
+#include "FS_remote_control_unit.h"
 //void can_filter_init(void);
 /* USER CODE END Includes */
 
@@ -37,7 +38,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define Remote_Protected_MAX_time 100//这里需要根据实际情况调整
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -47,18 +48,8 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
-int16_t GetSpeed=0,GetAngle=0,GetCurrent=0,GetTemperature=0;
-int16_t Last_Get_Real_Angle=0,Get_Real_Angle=0;//CAN通信返回的值
-int16_t SetVoltage=12500;//这里是电压值。电压给定值范围：-25000~0~25000, 对应最大转矩电流范围 -3A~0~3A
-int16_t SetSpeed=200;//这里是转速
-int16_t SetPosition=200;
-int8_t number;//这里是圈数
-
-extern uint8_t rx_buffer[32];
-
-extern uint16_t channels[32];
-
-MOTOR_t motor_6020;
+uint16_t GetSpeed,SetSpeed,GetRpm,GetCurrent,GetTemperature;
+int16_t speed=9000;
 /* USER CODE END Variables */
 osThreadId defaultTaskHandle;
 osThreadId printf_dataHandle;
@@ -137,7 +128,7 @@ void MX_FREERTOS_Init(void) {
   * @retval None
   */
 /* USER CODE END Header_StartDefaultTask */
-void StartDefaultTask(void const * argument)
+void StartDefaultTask(void const * argument)//这个是motor任务的代码
 {
   /* USER CODE BEGIN StartDefaultTask */
 	MOTOR_Init(&motor_6020);
@@ -148,35 +139,17 @@ void StartDefaultTask(void const * argument)
   /* Infinite loop */
 	for(;;)//这段CMD代码一定要放在循环中否则动不了。还有就是由于这里没有电调，所以直接用的是电机的标识符
   {
-    if(channels[0]==1501&&channels[1]==1499&&channels[2]==1500&&channels[3]==1500&&channels[4]==1000&&channels[5]==1000)
-		{
-			motor_6020.give_Voltage=0;
-		}
-		else
-		{
-			motor_6020.speed=GetSpeed;//速度环
-			motor_6020.Set_speed=(channels[1]-1500)*300/500;
-//		motor_6020.Set_speed=SetSpeed;
-			motor_6020.give_Voltage=(int16_t)PID_Speed_Calculate(&motor_6020.speed_PID,motor_6020.speed,motor_6020.Set_speed);
-				
-//		motor_6020.position=GetAngle;//位置环(能控但是有点慢且不准)
-//		motor_6020.Set_position=(channels[2]-1000)*720/1000;
-////		motor_6020.Set_position=SetPosition;
-//		motor_6020.give_Voltage=(int16_t)PID_Position_Calculate(&motor_6020.position_PID,motor_6020.position,motor_6020.Set_position);
-		}
-
-    CAN_TxHeaderTypeDef pHeader1;//控制电机电压
-		pHeader1.StdId = 0x1FF;       
-		pHeader1.IDE = CAN_ID_STD;    
-		pHeader1.RTR = CAN_RTR_DATA;  
-		pHeader1.DLC = 0x08;          
-
+    CAN_TxHeaderTypeDef pHeader1;
+		pHeader1.StdId = 0x1FF;       //��ʶ����0x205
+		pHeader1.IDE = CAN_ID_STD;    //֡���ͣ���׼֡
+		pHeader1.RTR = CAN_RTR_DATA;  //֡��ʽ��DATA
+		pHeader1.DLC = 0x08;          //DLC��8�ֽ�
+		
 		uint8_t aData[8]={0};
-	aData[0] = motor_6020.give_Voltage >> 8;          
-	aData[1] = motor_6020.give_Voltage;
-//		aData[0] = SetVoltage >> 8;          
-//		aData[1] = SetVoltage;    		
-		aData[2] = 0;          
+		int16_t speed=10000;
+		aData[0] = speed >> 8;          //���ID��1�����Ƶ���ֵ��8λ
+		aData[1] = speed;               //���ID��1�����Ƶ�����8λ
+		aData[2] = 0;          //���ID��1�����Ƶ���ֵ��8λ
 		aData[3] = 0; 
 		aData[4] = 0;          
 		aData[5] = 0; 
@@ -184,7 +157,6 @@ void StartDefaultTask(void const * argument)
 		aData[7] = 0; 
 		
 		HAL_CAN_AddTxMessage(&hcan1, &pHeader1, aData, 0);
-
   }
   /* USER CODE END StartDefaultTask */
 }
@@ -196,15 +168,14 @@ void StartDefaultTask(void const * argument)
 * @retval None
 */
 /* USER CODE END Header_StartTask02 */
-void StartTask02(void const * argument)
+void StartTask02(void const * argument)//优先级比电机驱动高，后面可能得改一下
 {
   /* USER CODE BEGIN StartTask02 */
   /* Infinite loop */
   for(;;)
   {
 //		printf("Rpm:%d,Speed:%d,Current:%d,Temperature:%d\n", GetRpm,GetSpeed,GetCurrent,GetTemperature);  // 两个 %d，两个参数
-		printf("%d,%d,%d,%d\n", GetAngle,GetSpeed,GetCurrent,GetTemperature);  // 两个 %d，两个参数
-		HAL_UART_Receive_IT(&huart3,rx_buffer,32);
+		printf("%d,%d,%d,%d\n", GetRpm,GetSpeed,GetCurrent,GetTemperature);  // 两个 %d，两个参数
 		osDelay(1);
   }
   /* USER CODE END StartTask02 */
@@ -214,33 +185,25 @@ void StartTask02(void const * argument)
 /* USER CODE BEGIN Application */
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)//回调函数
 {
-    CAN_RxHeaderTypeDef rx_header;
+CAN_RxHeaderTypeDef rx_header;
     uint8_t rx_data[8]={0};
     HAL_CAN_GetRxMessage(&hcan1, CAN_FILTER_FIFO0, &rx_header, rx_data);//将数据存放于rx_data数组中
  
-    switch (rx_header.StdId)//这个以及下面自己发挥
+		switch (rx_header.StdId)//这个以及下面自己发挥
     {
  
-        case 0x205://根据电机具体id号设置 0x204+id(6020手册上找)
+        
+				case 0x205://根据电机具体id号设置 0x204+id(6020手册上找)
         {
-             Last_Get_Real_Angle=Get_Real_Angle;
-						Get_Real_Angle=((uint16_t)((rx_data)[0] << 8 | (rx_data)[1]))*360/8192;
+            GetRpm=(uint16_t)((rx_data)[0] << 8 | (rx_data)[1]);
             GetSpeed = (uint16_t)((rx_data)[2] << 8 | (rx_data)[3]); // 根据手册 2、3 位分别为电机转速的高八位、低八位
             GetCurrent=(uint16_t)((rx_data)[4] << 8 | (rx_data)[5]);
             GetTemperature=(uint16_t) (rx_data)[6] ;
-					if(Last_Get_Real_Angle-Get_Real_Angle>200)
-						{
-								number++;
-						}
-						if(Last_Get_Real_Angle-Get_Real_Angle<-200)
-						{
-							number--;
-						}
-						GetAngle=Get_Real_Angle+number*360;
             break;																										// 此处是将两个数据合并为一个数据
         }
- 
+				
     }
-//	GetSpeed = (uint16_t)((rx_data)[2] << 8 | (rx_data)[3]); // 根据手册 2、3 位分别为电机转速的高八位、低八位
+
 	}
+
 /* USER CODE END Application */

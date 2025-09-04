@@ -3,7 +3,7 @@ float M6020_MOTOR_POSITION_PID_KP=600.0;
 float M6020_MOTOR_POSITION_PID_KI=0.1;
 float M6020_MOTOR_POSITION_PID_KD=10.0;
 
-float M6020_MOTOR_SPEED_PID_KP=20.0;
+float M6020_MOTOR_SPEED_PID_KP=70.0;
 float M6020_MOTOR_SPEED_PID_KI=0.01;
 float M6020_MOTOR_SPEED_PID_KD=0.0;
 
@@ -106,7 +106,6 @@ float PID_Speed_Calculate(PID_type_def *pid,float now_value,float set_value)
     {
         return 0.0f;
     }
-
     pid->error[0]=set_value-now_value;
     pid->Set=set_value;
     pid->Feedback=now_value;
@@ -119,7 +118,7 @@ float PID_Speed_Calculate(PID_type_def *pid,float now_value,float set_value)
     //KD:
     pid->Dout=pid->KD*(pid->error[0]-2*pid->error[1]+pid->error[2]);
 
-    pid->out+=pid->Pout+pid->Iout+pid->Dout;
+    pid->out+=pid->Pout+pid->Iout+pid->Dout;//注意这个加等于
     pid->out=LimitMax(pid->out,M6020_MOTOR_POSITION_PID_MAX_OUT);
 
 		pid->error[2]=pid->error[1];

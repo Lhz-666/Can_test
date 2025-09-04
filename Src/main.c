@@ -96,7 +96,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
 	//HAL_CAN_Start(&hcan1);
 	can_filter_init();
-	// 开始接收 IBUS 数据
+	    // 开始接收 IBUS 数据
     HAL_UART_Receive_IT(&huart3, rx_buffer, 32);
   /* USER CODE END 2 */
 
