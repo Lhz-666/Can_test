@@ -1,5 +1,7 @@
 --cpu=Cortex-M4.fp
 "can_test\startup_stm32f405xx.o"
+"can_test\pid.o"
+"can_test\fs_remote_control_unit.o"
 "can_test\main.o"
 "can_test\gpio.o"
 "can_test\freertos.o"
