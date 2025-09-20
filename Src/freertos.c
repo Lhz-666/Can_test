@@ -18,7 +18,8 @@
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
-//this is main branch
+
+//git branch dev
 #include "FreeRTOS.h"
 #include "task.h"
 #include "main.h"
@@ -91,6 +92,8 @@ uint8_t remote_protect_flag=0;//0是开启，1是关闭
 
 /*其他的数据*/
 int16_t times=0;//时间遥控保护
+
+int16_t ABD=0;//圈数
 
 extern uint8_t rx_buffer[32];//接收缓冲
 
