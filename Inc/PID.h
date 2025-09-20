@@ -1,3 +1,7 @@
+
+#ifndef PID_H_
+#define PID_H_
+
 #include "stdint.h"
 typedef int16_t motor_measure;//改个名字
 
@@ -65,3 +69,4 @@ void PID_Init(PID_type_def *pid,const float PID[3],float max_out,float max_iout)
 返回：无
 */
 void MOTOR_Init(MOTOR_t *motor6020);
+#endif
