@@ -25,7 +25,11 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "FS_remote_control_unit.h"
+#include "IIC.h"
+#include "inv_mpu.h"
+#include "inv_mpu_dmp_motion_driver.h"
+#include "mpu6050.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -46,7 +50,8 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+extern uint8_t rx_buffer[32];
+int flag;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -92,14 +97,19 @@ int main(void)
   MX_GPIO_Init();
   MX_CAN1_Init();
   MX_USART1_UART_Init();
+  MX_USART3_UART_Init();
+  MX_CAN2_Init();
   /* USER CODE BEGIN 2 */
-	//HAL_CAN_Start(&hcan1);
 	can_filter_init();
+	MPU_Init();
+	flag=mpu_dmp_init();
+	// 开始接收 IBUS 数据
+    HAL_UART_Receive_IT(&huart3, rx_buffer, 32);
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in cmsis_os2.c) */
   MX_FREERTOS_Init();
-	printf("init_success\n");
+
   /* Start scheduler */
   osKernelStart();
 
@@ -165,7 +175,7 @@ void SystemClock_Config(void)
 void can_filter_init(void)
 {
     CAN_FilterTypeDef can_filter_st;
-    can_filter_st.FilterActivation = ENABLE;
+    can_filter_st.FilterActivation = ENABLE;//Can1_filter_Init
     can_filter_st.FilterMode = CAN_FILTERMODE_IDMASK;
     can_filter_st.FilterScale = CAN_FILTERSCALE_32BIT;
     can_filter_st.FilterIdHigh = 0x0000;
@@ -173,11 +183,26 @@ void can_filter_init(void)
     can_filter_st.FilterMaskIdHigh = 0x0000;
     can_filter_st.FilterMaskIdLow = 0x0000;
 	
-    can_filter_st.FilterBank = 0;//Can1������
+    can_filter_st.FilterBank = 0;//Can1
     can_filter_st.FilterFIFOAssignment = CAN_RX_FIFO0;
     HAL_CAN_ConfigFilter(&hcan1, &can_filter_st);
     HAL_CAN_Start(&hcan1);
     HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING);
+	
+		can_filter_st.FilterActivation = ENABLE;//Can2_filter_Init
+    can_filter_st.FilterMode = CAN_FILTERMODE_IDMASK;
+    can_filter_st.FilterScale = CAN_FILTERSCALE_32BIT;
+    can_filter_st.FilterIdHigh = 0x0000;
+    can_filter_st.FilterIdLow = 0x0000;
+    can_filter_st.FilterMaskIdHigh = 0x0000;
+    can_filter_st.FilterMaskIdLow = 0x0000;
+	
+    can_filter_st.FilterBank = 14;//Can2
+		can_filter_st.SlaveStartFilterBank=14;
+    can_filter_st.FilterFIFOAssignment = CAN_RX_FIFO1;
+    HAL_CAN_ConfigFilter(&hcan2, &can_filter_st);
+    HAL_CAN_Start(&hcan2);
+    HAL_CAN_ActivateNotification(&hcan2, CAN_IT_RX_FIFO1_MSG_PENDING);
 //	if(HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING)!=HAL_OK)
 //	{
 //		printf("CAN_IT_Failed\n");
@@ -187,7 +212,7 @@ void can_filter_init(void)
 //		printf("CAN_IT_Success\n");
 //	}
 		
-		printf("can_filter_init_success\n");
+//		printf("can_filter_init_success\n");
 }
 /* USER CODE END 4 */
 
