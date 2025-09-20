@@ -18,7 +18,8 @@
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
-//this is main branch
+
+//git branch dev
 #include "FreeRTOS.h"
 #include "task.h"
 #include "main.h"
@@ -80,7 +81,7 @@ int8_t pitch_number1=0,yaw_number2=0;//这里是圈数
 int16_t bopan_number3=0;//这里是圈数
 
 /*实验值*/
-int16_t setspeed=0;
+int16_t setspeed=150;
 int16_t pitch_setposition=0;
 int16_t yaw_setposition=0;
 int16_t inner_yaw_setposition=0;
@@ -91,6 +92,8 @@ uint8_t remote_protect_flag=0;//0是开启，1是关闭
 
 /*其他的数据*/
 int16_t times=0;//时间遥控保护
+
+int16_t ABD=0;//圈数
 
 extern uint8_t rx_buffer[32];//接收缓冲
 
