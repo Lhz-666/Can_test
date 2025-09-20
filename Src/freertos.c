@@ -18,11 +18,8 @@
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
-<<<<<<< HEAD
 
 //git branch dev
-=======
->>>>>>> parent of abceeed (这才是主分支呀)
 #include "FreeRTOS.h"
 #include "task.h"
 #include "main.h"
