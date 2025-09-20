@@ -19,7 +19,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 
-//git create branch dev
+//git branch dev
 #include "FreeRTOS.h"
 #include "task.h"
 #include "main.h"
