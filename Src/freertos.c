@@ -39,7 +39,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define Remote_Protected_MAX_time 100//这里需要根据实际情况调整
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -157,7 +157,7 @@ void MX_FREERTOS_Init(void) {
 
   /* Create the thread(s) */
   /* definition and creation of defaultTask */
-  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
+  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 256);
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
   /* definition and creation of printf_data */
@@ -181,7 +181,7 @@ void MX_FREERTOS_Init(void) {
   * @retval None
   */
 /* USER CODE END Header_StartDefaultTask */
-void StartDefaultTask(void const * argument)
+void StartDefaultTask(void const * argument)//这个是motor任务的代码
 {
   /* USER CODE BEGIN StartDefaultTask */
 	MOTOR_Init(&pitch_motor_6020);//赋予相应的PID值以及最大输出值
@@ -416,11 +416,11 @@ void remote_protect(void const * argument)
 /*后面这堆函数都是获取数据*/
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)//回调函数
 {
-    CAN_RxHeaderTypeDef rx_header;
+CAN_RxHeaderTypeDef rx_header;
     uint8_t rx_data[8]={0};
     HAL_CAN_GetRxMessage(&hcan1, CAN_FILTER_FIFO0, &rx_header, rx_data);//将数据存放于rx_data数组中
  
-    switch (rx_header.StdId)//这个以及下面自己发挥
+		switch (rx_header.StdId)//这个以及下面自己发挥
     {
  
         case 0x206://根据电机具体id号设置 0x204+id(6020手册上找)//pitch轴
@@ -503,5 +503,38 @@ void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef *hcan)//回调函数
  
     }
 //	GetSpeed = (uint16_t)((rx_data)[2] << 8 | (rx_data)[3]); // 根据手册 2、3 位分别为电机转速的高八位、低八位
+}
+
+void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef *hcan)//回调函数
+{
+    CAN_RxHeaderTypeDef rx_header;
+    uint8_t rx_data[8]={0};
+    HAL_CAN_GetRxMessage(&hcan2, CAN_FILTER_FIFO1, &rx_header, rx_data);//将数据存放于rx_data数组中
+ 
+    switch (rx_header.StdId)//这个以及下面自己发挥
+    {
+ 
+        case 0x208://根据电机具体id号设置 0x204+id(6020手册上找)
+        {
+             Last_Get_Real_Angle2=Get_Real_Angle2;
+						Get_Real_Angle2=((uint16_t)((rx_data)[0] << 8 | (rx_data)[1]))*360/8192;
+            GetSpeed2 = (uint16_t)((rx_data)[2] << 8 | (rx_data)[3]); // 根据手册 2、3 位分别为电机转速的高八位、低八位
+            GetCurrent2=(uint16_t)((rx_data)[4] << 8 | (rx_data)[5]);
+            GetTemperature2=(uint16_t) (rx_data)[6] ;
+					if(Last_Get_Real_Angle2-Get_Real_Angle2>200)
+						{
+								number2++;
+						}
+						if(Last_Get_Real_Angle2-Get_Real_Angle2<-200)
+						{
+							number2--;
+						}
+						GetAngle2=Get_Real_Angle2+number2*360;
+            break;																										// 此处是将两个数据合并为一个数据
+        }
+				
+    }
+
 	}
+
 /* USER CODE END Application */
